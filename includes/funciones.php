@@ -6,6 +6,24 @@ function debuguear($variable) : string {
     echo "</pre>";
     exit;
 }
+
+function env_var(string $key, string $default = '') : string {
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return (string) $_SERVER[$key];
+    }
+
+    $value = getenv($key);
+    if ($value !== false && $value !== '') {
+        return (string) $value;
+    }
+
+    return $default;
+}
+
 function s($html) : string {
     $s = htmlspecialchars($html);
     return $s;

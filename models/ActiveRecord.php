@@ -36,6 +36,11 @@ class ActiveRecord {
         // Consultar la base de datos
         $resultado = self::$db->query($query);
 
+        if($resultado === false) {
+            error_log('SQL query failed: ' . self::$db->error . ' | Query: ' . $query);
+            return [];
+        }
+
         // Iterar los resultados
         $array = [];
         while($registro = $resultado->fetch_assoc()) {
@@ -172,6 +177,10 @@ class ActiveRecord {
             $query .= " WHERE ${columna} = ${valor}";
         }
         $resultado = self::$db->query($query);
+        if($resultado === false) {
+            error_log('SQL total failed: ' . self::$db->error . ' | Query: ' . $query);
+            return 0;
+        }
         $total = $resultado->fetch_array();
 
         return array_shift($total);
@@ -188,6 +197,10 @@ class ActiveRecord {
             }
         }
         $resultado = self::$db->query($query);
+        if($resultado === false) {
+            error_log('SQL totalArray failed: ' . self::$db->error . ' | Query: ' . $query);
+            return 0;
+        }
         $total = $resultado->fetch_array();
         return array_shift($total);
     }

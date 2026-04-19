@@ -17,20 +17,37 @@ class Email {
         $this->token = $token;
     }
 
+    private function env(string $key, string $default = '') : string {
+        if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+            return (string) $_ENV[$key];
+        }
+
+        if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+            return (string) $_SERVER[$key];
+        }
+
+        $value = getenv($key);
+        if ($value !== false && $value !== '') {
+            return (string) $value;
+        }
+
+        return $default;
+    }
+
     private function configurarMailer() : PHPMailer {
         $mail = new PHPMailer();
         $mail->isSMTP();
-        $mail->Host = $_ENV['SMTP_HOST'] ?? ($_ENV['EMAIL_HOST'] ?? 'smtp.sendgrid.net');
+        $mail->Host = $this->env('SMTP_HOST', $this->env('EMAIL_HOST', 'smtp.sendgrid.net'));
         $mail->SMTPAuth = true;
-        $mail->Port = (int) ($_ENV['SMTP_PORT'] ?? ($_ENV['EMAIL_PORT'] ?? 587));
-        $mail->Username = $_ENV['SMTP_USER'] ?? ($_ENV['EMAIL_USER'] ?? 'apikey');
-        $mail->Password = $_ENV['SMTP_PASS'] ?? ($_ENV['EMAIL_PASS'] ?? '');
-        $mail->SMTPSecure = $_ENV['SMTP_SECURE'] ?? ($_ENV['EMAIL_SECURE'] ?? PHPMailer::ENCRYPTION_STARTTLS);
+        $mail->Port = (int) $this->env('SMTP_PORT', $this->env('EMAIL_PORT', '587'));
+        $mail->Username = $this->env('SMTP_USER', $this->env('EMAIL_USER', 'apikey'));
+        $mail->Password = $this->env('SMTP_PASS', $this->env('EMAIL_PASS', ''));
+        $mail->SMTPSecure = $this->env('SMTP_SECURE', $this->env('EMAIL_SECURE', PHPMailer::ENCRYPTION_STARTTLS));
         $mail->SMTPAutoTLS = true;
 
         $mail->setFrom(
-            $_ENV['MAIL_FROM_ADDRESS'] ?? ($_ENV['SMTP_FROM'] ?? ($_ENV['EMAIL_FROM'] ?? 'no-reply@devwebcamp.com')),
-            $_ENV['MAIL_FROM_NAME'] ?? ($_ENV['SMTP_FROM_NAME'] ?? ($_ENV['EMAIL_FROM_NAME'] ?? 'DevWebCamp'))
+            $this->env('MAIL_FROM_ADDRESS', $this->env('SMTP_FROM', $this->env('EMAIL_FROM', 'no-reply@devwebcamp.com'))),
+            $this->env('MAIL_FROM_NAME', $this->env('SMTP_FROM_NAME', $this->env('EMAIL_FROM_NAME', 'DevWebCamp')))
         );
 
         $mail->isHTML(true);
@@ -47,7 +64,7 @@ class Email {
 
          $contenido = '<html>';
          $contenido .= "<p><strong>Hola " . $this->nombre .  "</strong> Has Registrado Correctamente tu cuenta en DevWebCamp; pero es necesario confirmarla</p>";
-         $contenido .= "<p>Presiona aquí: <a href='" . $_ENV['HOST'] . "/confirmar-cuenta?token=" . $this->token . "'>Confirmar Cuenta</a>";       
+         $contenido .= "<p>Presiona aquí: <a href='" . $this->env('HOST') . "/confirmar-cuenta?token=" . $this->token . "'>Confirmar Cuenta</a>";       
          $contenido .= "<p>Si tu no creaste esta cuenta; puedes ignorar el mensaje</p>";
          $contenido .= '</html>';
          $mail->Body = $contenido;
@@ -65,7 +82,7 @@ class Email {
 
         $contenido = '<html>';
         $contenido .= "<p><strong>Hola " . $this->nombre .  "</strong> Has solicitado reestablecer tu password, sigue el siguiente enlace para hacerlo.</p>";
-        $contenido .= "<p>Presiona aquí: <a href='" . $_ENV['HOST'] . "/reestablecer?token=" . $this->token . "'>Reestablecer Password</a>";        
+        $contenido .= "<p>Presiona aquí: <a href='" . $this->env('HOST') . "/reestablecer?token=" . $this->token . "'>Reestablecer Password</a>";        
         $contenido .= "<p>Si tu no solicitaste este cambio, puedes ignorar el mensaje</p>";
         $contenido .= '</html>';
         $mail->Body = $contenido;

@@ -1,5 +1,14 @@
 <?php 
 
+// Healthcheck liviano para plataformas cloud (sin tocar DB)
+$request_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+if ($request_path === '/healthz') {
+    http_response_code(200);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo 'ok';
+    exit;
+}
+
 require_once __DIR__ . '/../includes/app.php';
 
 use MVC\Router;

@@ -23,10 +23,8 @@ vendor/
 # =========================
 # Build artifacts
 # =========================
-public/build/
 
 # Uploads runtime (imagenes subidas desde admin)
-public/img/speakers/
 
 # =========================
 # Logs / caches / temporales

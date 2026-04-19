@@ -14,7 +14,12 @@ class PaginasController {
 
         $eventos = Evento::ordenar('hora_id', 'ASC');
 
-        $eventos_formateados = [];
+        $eventos_formateados = [
+            'conferencias_v' => [],
+            'conferencias_s' => [],
+            'workshops_v' => [],
+            'workshops_s' => []
+        ];
         foreach($eventos as $evento) {
             $evento->categoria = Categoria::find($evento->categoria_id);
             $evento->dia = Dia::find($evento->dia_id);
@@ -73,7 +78,12 @@ class PaginasController {
 
         $eventos = Evento::ordenar('hora_id', 'ASC');
 
-        $eventos_formateados = [];
+        $eventos_formateados = [
+            'conferencias_v' => [],
+            'conferencias_s' => [],
+            'workshops_v' => [],
+            'workshops_s' => []
+        ];
         foreach($eventos as $evento) {
             $evento->categoria = Categoria::find($evento->categoria_id);
             $evento->dia = Dia::find($evento->dia_id);

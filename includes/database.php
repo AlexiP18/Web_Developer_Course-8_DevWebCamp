@@ -19,14 +19,25 @@ if (($db_host === '' || $db_user === '' || $db_name === '') && $database_url !==
     }
 }
 
+$db = null;
+
 if ($db_host === '' || $db_user === '' || $db_name === '') {
     error_log('DB config missing. Required: DB_HOST/DB_USER/DB_NAME or DATABASE_HOST/DATABASE_USERNAME/DATABASE_NAME or DATABASE_URL');
-    http_response_code(500);
-    echo 'Error interno de configuracion de base de datos.';
-    exit;
+    return;
 }
 
-$db = mysqli_connect(
+mysqli_report(MYSQLI_REPORT_OFF);
+$db = mysqli_init();
+if ($db === false) {
+    error_log('DB init failed: mysqli_init returned false');
+    $db = null;
+    return;
+}
+
+mysqli_options($db, MYSQLI_OPT_CONNECT_TIMEOUT, 5);
+
+$connected = @mysqli_real_connect(
+    $db,
     $db_host,
     $db_user,
     $db_pass,
@@ -34,9 +45,7 @@ $db = mysqli_connect(
     $db_port
 );
 
-if (!$db) {
+if (!$connected) {
     error_log('DB connection failed: ' . mysqli_connect_error());
-    http_response_code(500);
-    echo 'Error interno de base de datos.';
-    exit;
+    $db = null;
 }

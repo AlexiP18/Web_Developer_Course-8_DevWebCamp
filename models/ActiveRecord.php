@@ -15,6 +15,10 @@ class ActiveRecord {
         self::$db = $database;
     }
 
+    protected static function hasDB() : bool {
+        return self::$db instanceof \mysqli;
+    }
+
     // Setear un tipo de Alerta
     public static function setAlerta($tipo, $mensaje) {
         static::$alertas[$tipo][] = $mensaje;
@@ -33,6 +37,11 @@ class ActiveRecord {
 
     // Consulta SQL para crear un objeto en Memoria (Active Record)
     public static function consultarSQL($query) {
+        if(!self::hasDB()) {
+            error_log('SQL query skipped: no active DB connection');
+            return [];
+        }
+
         // Consultar la base de datos
         $resultado = self::$db->query($query);
 
@@ -80,6 +89,10 @@ class ActiveRecord {
     public function sanitizarAtributos() {
         $atributos = $this->atributos();
         $sanitizado = [];
+        if(!self::hasDB()) {
+            return $sanitizado;
+        }
+
         foreach($atributos as $key => $value ) {
             $sanitizado[$key] = self::$db->escape_string($value);
         }
@@ -172,6 +185,11 @@ class ActiveRecord {
 
     // Traer un total de registros
     public static function total($columna = '', $valor = '') {
+        if(!self::hasDB()) {
+            error_log('SQL total skipped: no active DB connection');
+            return 0;
+        }
+
         $query = "SELECT COUNT(*) FROM " . static::$tabla;
         if($columna) {
             $query .= " WHERE ${columna} = ${valor}";
@@ -188,6 +206,11 @@ class ActiveRecord {
 
     // Total de Registros con un Array Where
     public static function totalArray($array = []) {
+        if(!self::hasDB()) {
+            error_log('SQL totalArray skipped: no active DB connection');
+            return 0;
+        }
+
         $query = "SELECT COUNT(*) FROM " . static::$tabla . " WHERE ";
         foreach($array as $key => $value) {
             if($key == array_key_last($array)) {
@@ -207,6 +230,14 @@ class ActiveRecord {
 
     // crea un nuevo registro
     public function crear() {
+        if(!self::hasDB()) {
+            error_log('SQL create skipped: no active DB connection');
+            return [
+                'resultado' => false,
+                'id' => null
+            ];
+        }
+
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
 
@@ -229,6 +260,11 @@ class ActiveRecord {
 
     // Actualizar el registro
     public function actualizar() {
+        if(!self::hasDB()) {
+            error_log('SQL update skipped: no active DB connection');
+            return false;
+        }
+
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
 
@@ -251,6 +287,11 @@ class ActiveRecord {
 
     // Eliminar un Registro por su ID
     public function eliminar() {
+        if(!self::hasDB()) {
+            error_log('SQL delete skipped: no active DB connection');
+            return false;
+        }
+
         $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
         $resultado = self::$db->query($query);
         return $resultado;

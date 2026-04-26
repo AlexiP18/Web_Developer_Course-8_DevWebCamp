@@ -232,10 +232,7 @@ class ActiveRecord {
     public function crear() {
         if(!self::hasDB()) {
             error_log('SQL create skipped: no active DB connection');
-            return [
-                'resultado' => false,
-                'id' => null
-            ];
+            return false;
         }
 
         // Sanitizar los datos
@@ -252,6 +249,11 @@ class ActiveRecord {
 
         // Resultado de la consulta
         $resultado = self::$db->query($query);
+        if($resultado === false) {
+            error_log('SQL create failed: ' . self::$db->error . ' | Query: ' . $query);
+            return false;
+        }
+
         return [
            'resultado' =>  $resultado,
            'id' => self::$db->insert_id

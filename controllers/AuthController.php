@@ -95,15 +95,16 @@ class AuthController {
 
                     // Crear un nuevo usuario
                     $resultado =  $usuario->guardar();
-
-                    // Enviar email
-                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
-                    $email->enviarConfirmacion();
-                    
-
                     if($resultado) {
+                        // Enviar email solo si el usuario se guardo correctamente
+                        $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+                        $email->enviarConfirmacion();
                         header('Location: /mensaje');
+                        return;
                     }
+
+                    Usuario::setAlerta('error', 'No se pudo crear la cuenta. Verifica la conexion a base de datos.');
+                    $alertas = Usuario::getAlertas();
                 }
             }
         }
@@ -135,17 +136,15 @@ class AuthController {
                     unset($usuario->password2);
 
                     // Actualizar el usuario
-                    $usuario->guardar();
-
-                    // Enviar el email
-                    $email = new Email( $usuario->email, $usuario->nombre, $usuario->token );
-                    $email->enviarInstrucciones();
-
-
-                    // Imprimir la alerta
-                    // Usuario::setAlerta('exito', 'Hemos enviado las instrucciones a tu email');
-
-                    $alertas['exito'][] = 'Hemos enviado las instrucciones a tu email';
+                    $resultado = $usuario->guardar();
+                    if($resultado) {
+                        // Enviar el email
+                        $email = new Email( $usuario->email, $usuario->nombre, $usuario->token );
+                        $email->enviarInstrucciones();
+                        $alertas['exito'][] = 'Hemos enviado las instrucciones a tu email';
+                    } else {
+                        $alertas['error'][] = 'No se pudo procesar la solicitud. Verifica la conexion a base de datos.';
+                    }
                 } else {
                  
                     // Usuario::setAlerta('error', 'El Usuario no existe o no esta confirmado');

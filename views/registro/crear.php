@@ -58,7 +58,7 @@
     </div>
 </main>
 
-  <script src="https://www.paypal.com/sdk/js?client-id=Adc6YGqAvfmtD_7WCDB9mf3AidMfM18ZQr49mGkIHEOF8XuFTW7aAMFuB09wVfMsKy54lOoFfpWqL3HS&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=ARlJYrCFOoZBK6GyNKJbXSVG9WZFNKnSnWd9FK0p_oV4Kvfygg-7oc15RHpc7JWJyvX7dtV7sSQ_vBbJ&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 
   <script>
     function initPayPalButton() {

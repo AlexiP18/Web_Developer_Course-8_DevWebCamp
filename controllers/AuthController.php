@@ -40,9 +40,11 @@ class AuthController {
 
                         // Redirección 
                         if($usuario->admin) {
+                            session_write_close();
                             header('Location: /admin/dashboard');
                             return;
                         } else {
+                            session_write_close();
                             header('Location: /finalizar-registro');
                             return;
                         }
@@ -69,6 +71,7 @@ class AuthController {
                 session_start();
             }
             $_SESSION = [];
+            session_write_close();
             header('Location: /');
             return;
         }

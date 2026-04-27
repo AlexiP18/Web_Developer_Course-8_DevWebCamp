@@ -3,6 +3,7 @@
         <nav class="header__navegacion">
 
             <?php if(is_auth()) { ?>
+                <span class="header__enlace">Hola, <?php echo s($_SESSION['nombre'] ?? ''); ?></span>
                 <a href="<?php echo is_admin() ? '/admin/dashboard' : '/finalizar-registro'; ?>" class="header__enlace">Administrar</a>
                 <form method="POST" action="/logout" class="header__form">
                     <input type="submit" value="Cerrar Sesión" class="header__submit">

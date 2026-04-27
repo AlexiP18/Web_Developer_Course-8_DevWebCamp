@@ -31,6 +31,7 @@ class AuthController {
                         if (session_status() !== PHP_SESSION_ACTIVE) {
                             session_start();
                         }
+                        session_regenerate_id(true);
                         $_SESSION['id'] = $usuario->id;
                         $_SESSION['nombre'] = $usuario->nombre;
                         $_SESSION['apellido'] = $usuario->apellido;

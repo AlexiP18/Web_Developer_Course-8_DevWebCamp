@@ -37,17 +37,19 @@ function pagina_actual($path ) : bool {
 }
 
 function is_auth() : bool {
-    if(!isset($_SESSION)) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
-    return isset($_SESSION['nombre']) && !empty($_SESSION);
+
+    return isset($_SESSION['id']) && !empty($_SESSION['id']);
 }
 
 function is_admin() : bool {
-    if(!isset($_SESSION)) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
-    return isset($_SESSION['admin']) && !empty($_SESSION['admin']);
+
+    return isset($_SESSION['admin']) && (int) $_SESSION['admin'] === 1;
 }
 
 function aos_animacion() : void {

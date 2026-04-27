@@ -28,7 +28,9 @@ class AuthController {
                     if( password_verify($_POST['password'], $usuario->password) ) {
                         
                         // Iniciar la sesión
-                        session_start();    
+                        if (session_status() !== PHP_SESSION_ACTIVE) {
+                            session_start();
+                        }
                         $_SESSION['id'] = $usuario->id;
                         $_SESSION['nombre'] = $usuario->nombre;
                         $_SESSION['apellido'] = $usuario->apellido;
@@ -38,8 +40,10 @@ class AuthController {
                         // Redirección 
                         if($usuario->admin) {
                             header('Location: /admin/dashboard');
+                            return;
                         } else {
                             header('Location: /finalizar-registro');
+                            return;
                         }
                         
                     } else {
@@ -60,9 +64,12 @@ class AuthController {
 
     public static function logout() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            session_start();
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
             $_SESSION = [];
             header('Location: /');
+            return;
         }
        
     }

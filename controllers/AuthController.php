@@ -11,6 +11,11 @@ class AuthController {
 
         $alertas = [];
 
+        if (is_auth()) {
+            header('Location: ' . (is_admin() ? '/admin/dashboard' : '/finalizar-registro'));
+            return;
+        }
+
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
     
@@ -81,6 +86,11 @@ class AuthController {
     public static function registro(Router $router) {
         $alertas = [];
         $usuario = new Usuario;
+
+        if (is_auth()) {
+            header('Location: /finalizar-registro');
+            return;
+        }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
